@@ -1,32 +1,29 @@
 class ContactsController < ApplicationController
-  before_action :set_contact, only: [:show, :edit, :update, :destroy]
 
   def index
     @contacts = Contact.all
   end
 
   def show
+    @contact = Contact.find(params[:id])
   end
 
-  def mew
-    @contact = Contact.new
-  end
 
   def edit
+    @contact = Contact.new
   end
 
   def create
     @contact = Contact.new(contact_params)
-
+    @contact.created_at = Time.now
     if @contact.save
-      redirect_to @contact, notice: 'Contact was successfully created.'
-      render :show, status: :created, location: @contact
+      redirect_to contacts_url, notice: 'Contact was successfully created.'
     else
       render :new
     end
   end
 
-  def destroy
+  def update
     if @contact.update(contact_params)
       redirect_to @contact, notice: 'Contact was successfully updated.'
     else
@@ -34,7 +31,7 @@ class ContactsController < ApplicationController
     end
   end
 
-  def update
+  def destroy
     @contact.destroy
     redirect_to contacts_url, notice: 'Contact was successfully destroyed.'
   end
@@ -49,9 +46,6 @@ class ContactsController < ApplicationController
     end
 
     def contact_params
-      params[:contact][:email].reverse!
-      params[:contact][:name].reverse!
-      params[:contact][:notes].reverse!
       params.require(:contact).permit(:name, :email, :notes)
     end
 end
